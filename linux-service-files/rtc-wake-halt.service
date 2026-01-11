@@ -8,15 +8,14 @@ Type=oneshot
 # Set wake duration in seconds (default: 3600 = 1 hour)
 Environment="WAKE_SECONDS=600"
 ExecStart=/usr/local/bin/rtc-wake-halt.sh
-StandardOutput=journal
-StandardError=journal
-SyslogIdentifier=rtc-wake-halt
+StandardOutput=append:/var/log/rtc-wake-halt.log
+StandardError=append:/var/log/rtc-wake-halt.log
 
 # Security hardening
 PrivateTmp=yes
 NoNewPrivileges=yes
 ProtectSystem=strict
-ReadWritePaths=/sys/class/rtc/rtc0
+ReadWritePaths=/sys/class/rtc/rtc0 /var/log/rtc-wake-halt.log
 
 [Install]
 WantedBy=multi-user.target

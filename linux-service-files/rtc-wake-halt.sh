@@ -4,11 +4,12 @@
 # Configuration
 WAKE_SECONDS=${WAKE_SECONDS:-3600}  # Default: wake after 1 hour (3600 seconds)
 RTC_DEVICE="/sys/class/rtc/rtc0"
+LOG_FILE="/var/log/rtc-wake-halt.log"
 
 # Log function
 log() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | systemd-cat -t rtc-wake-halt -p info
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+    local msg="[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+    echo "$msg" | tee -a "$LOG_FILE"
 }
 
 # Check if RTC device exists

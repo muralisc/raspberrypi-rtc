@@ -84,6 +84,21 @@ sudo systemctl list-timers rtc-wake-halt.timer
 ```
 
 ### View Logs
+
+Logs are written to `/var/log/rtc-wake-halt.log`:
+
+```bash
+# View all logs
+sudo cat /var/log/rtc-wake-halt.log
+
+# Follow logs in real-time
+sudo tail -f /var/log/rtc-wake-halt.log
+
+# View last 50 lines
+sudo tail -n 50 /var/log/rtc-wake-halt.log
+```
+
+You can also view via journalctl:
 ```bash
 journalctl -u rtc-wake-halt.service -f
 ```
@@ -133,6 +148,10 @@ sudo hwclock -r
 
 ### Check service logs
 ```bash
+# Check the log file
+sudo tail -f /var/log/rtc-wake-halt.log
+
+# Or use journalctl
 journalctl -u rtc-wake-halt.service
 journalctl -u rtc-wake-halt.timer
 ```
@@ -150,9 +169,10 @@ systemctl list-timers rtc-wake-halt.timer --all
 
 ### Common Issues
 
-**Permission denied on RTC device:**
-- The service runs with `ReadWritePaths=/sys/class/rtc/rtc0` to allow access
+**Permission denied on RTC device or log file:**
+- The service runs with `ReadWritePaths=/sys/class/rtc/rtc0 /var/log/rtc-wake-halt.log` to allow access
 - Ensure the RTC device exists at `/sys/class/rtc/rtc0`
+- Create the log file if it doesn't exist: `sudo touch /var/log/rtc-wake-halt.log`
 
 **Wake alarm not triggering:**
 - Verify RTC supports wake alarms: `cat /sys/class/rtc/rtc0/wakealarm`
