@@ -1,0 +1,22 @@
+[Unit]
+Description=RTC Wake Alarm and Halt Service
+Documentation=man:systemd.service(5)
+After=multi-user.target
+
+[Service]
+Type=oneshot
+# Set wake duration in seconds (default: 3600 = 1 hour)
+Environment="WAKE_SECONDS=600"
+ExecStart=/usr/local/bin/rtc-wake-halt.sh
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=rtc-wake-halt
+
+# Security hardening
+PrivateTmp=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/sys/class/rtc/rtc0
+
+[Install]
+WantedBy=multi-user.target
