@@ -3,8 +3,9 @@ Description=RTC Wake Halt Timer
 Documentation=man:systemd.timer(5)
 
 [Timer]
-# Run every 30 minutes
-OnCalendar=*:0/30
+# Run every 30 minutes, but not between 8pm (20:00) and midnight (00:00)
+# Runs at :00 and :30 from 00:00 to 19:30
+OnCalendar=*-*-* 00..19:00,30:00
 
 # Run immediately if the system was off when the timer should have triggered
 Persistent=true

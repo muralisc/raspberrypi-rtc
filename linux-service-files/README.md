@@ -6,7 +6,7 @@ This systemd service sets the Raspberry Pi 5 RTC wake alarm and halts the system
 
 - `rtc-wake-halt.sh` - Script that sets the RTC wake alarm and halts the system
 - `rtc-wake-halt.service` - Systemd service unit
-- `rtc-wake-halt.timer` - Systemd timer unit (runs every 30 minutes)
+- `rtc-wake-halt.timer` - Systemd timer unit (runs every 30 minutes, excluding 8pm-midnight)
 
 ## Installation
 
@@ -54,14 +54,16 @@ Environment="WAKE_SECONDS=7200"
 
 ### Schedule
 
-The timer is currently set to run every 30 minutes. To change the schedule, edit `rtc-wake-halt.timer`:
+The timer is currently set to run every 30 minutes from midnight to 8pm (not between 8pm and midnight). To change the schedule, edit `rtc-wake-halt.timer`:
 
-- Every 30 minutes (current): `OnCalendar=*:0/30`
+- Every 30 minutes excluding 8pm-midnight (current): `OnCalendar=*-*-* 00..19:00,30:00`
+- Every 30 minutes (all day): `OnCalendar=*:0/30`
 - Every hour: `OnCalendar=hourly`
 - Every 15 minutes: `OnCalendar=*:0/15`
 - Daily at specific time: `OnCalendar=*-*-* 23:00:00`
 - Every 6 hours: `OnCalendar=*-*-* 00,06,12,18:00:00`
 - Weekly on Sunday: `OnCalendar=Sun *-*-* 23:00:00`
+- Business hours only (9am-5pm, every 30 min): `OnCalendar=*-*-* 09..17:00,30:00`
 
 After changing, reload:
 ```bash
@@ -124,7 +126,7 @@ date -d @$(cat /sys/class/rtc/rtc0/wakealarm)
 
 ## How It Works
 
-1. The timer triggers every 30 minutes
+1. The timer triggers every 30 minutes from midnight to 8pm (skips 8pm-midnight)
 2. The service runs the script which:
    - Clears any existing RTC wake alarm
    - Calculates wake time (current time + WAKE_SECONDS)
